@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagrama de Flujo: Automatización INE + OCR</title>
+    <!-- Fuentes e Iconos -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-user: #eaf2f8;
+            --bg-n8n: #e8f8f5;
+            --bg-ine: #fef5e7;
+            --bg-utils: #f4ecf7;
+            --bg-sec: #f2f4f4;
+            --border-color: #d5d8dc;
+            --text-dark: #2c3e50;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #fdfefd;
+            color: var(--text-dark);
+            margin: 0;
+            padding: 40px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            margin: 0 0 10px 0;
+            font-size: 32px;
+            color: #1a252f;
+        }
+
+        .header p {
+            color: #7f8c8d;
+            font-size: 16px;
+            margin: 0;
+        }
+
+        /* Contenedor Grid Principal */
+        .swimlane-wrapper {
+            overflow-x: auto;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            border-radius: 12px;
+            background: white;
+            border: 1px solid var(--border-color);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 240px repeat(4, minmax(220px, 1fr));
+            min-width: 1150px;
+        }
+
+        /* Cabeceras de Columnas */
+        .step-header {
+            padding: 20px;
+            text-align: center;
+            font-weight: 700;
+            background: #fff;
+            border-bottom: 2px solid var(--text-dark);
+            border-right: 1px dashed var(--border-color);
+            color: #34495e;
+            font-size: 17px;
+        }
+        .step-header:last-child { border-right: none; }
+
+        /* Cabeceras de Filas */
+        .row-header {
+            padding: 20px;
+            font-weight: 600;
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border-bottom: 1px solid var(--border-color);
+            border-right: 2px solid var(--text-dark);
+        }
+        
+        .row-header i {
+            font-size: 24px;
+            width: 30px;
+            text-align: center;
+        }
+
+        /* Celdas del Grid */
+        .cell {
+            padding: 20px;
+            border-bottom: 1px solid var(--border-color);
+            border-right: 1px dashed var(--border-color);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            position: relative;
+        }
+        .cell:last-child { border-right: none; }
+
+        /* Colores de las filas */
+        .row-user { background-color: var(--bg-user); }
+        .row-n8n { background-color: var(--bg-n8n); }
+        .row-ine { background-color: var(--bg-ine); }
+        .row-utils { background-color: var(--bg-utils); }
+        .row-sec { background-color: var(--bg-sec); }
+
+        /* Tarjetas (Nodos) */
+        .card {
+            background: #ffffff;
+            border-radius: 8px;
+            padding: 16px;
+            font-size: 13.5px;
+            line-height: 1.5;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            border: 1px solid #e5e8e8;
+            transition: transform 0.2s, box-shadow 0.2s;
+            position: relative;
+            z-index: 2;
+        }
+
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+        }
+
+        .card-title {
+            font-weight: 700;
+            margin-bottom: 6px;
+            color: #2c3e50;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .icon-small {
+            margin-right: 5px;
+            color: #7f8c8d;
+        }
+
+        /* Flechas Conectoras Virtuales */
+        .flow-down::after {
+            content: '\f063';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #bdc3c7;
+            font-size: 16px;
+            z-index: 1;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>Diagrama de Flujo: Proceso de Gestión y Automatización INE</h1>
+        <p>Integración de Webhooks, extracción OCR (Nano Banana), validación segura y scrapping automatizado.</p>
+    </div>
+
+    <div class="swimlane-wrapper">
+        <div class="grid">
+            <!-- Headers -->
+            <div class="step-header" style="background: white; border-right: 2px solid var(--text-dark);">Roles / Capas</div>
+            <div class="step-header">Step 1: Captura, OCR e Ingesta</div>
+            <div class="step-header">Step 2: Lógica y Orquestación</div>
+            <div class="step-header">Step 3: Ejecución y Scraping</div>
+            <div class="step-header">Step 4: Documentos y Notificación</div>
+
+            <!-- Fila 1: Usuario -->
+            <div class="row-header row-user" style="color: #2980b9;">
+                <i class="fa-solid fa-users"></i> Originador / Usuario
+            </div>
+            <div class="cell row-user">
+                <div class="card flow-down">
+                    <div class="card-title"><i class="fa-solid fa-file-import icon-small"></i> Solicitud de Consulta</div>
+                    Ingresa imagen de INE o datos mediante Webhook / Formulario.
+                </div>
+            </div>
+            <div class="cell row-user"></div>
+            <div class="cell row-user"></div>
+            <div class="cell row-user">
+                <div class="card">
+                    <div class="card-title"><i class="fa-solid fa-check-double icon-small"></i> Cierre de Proceso</div>
+                    Recibe la validación final (Vigente/Error) y archivo adjunto.
+                </div>
+            </div>
+
+            <!-- Fila 2: n8n -->
+            <div class="row-header row-n8n" style="color: #16a085;">
+                <i class="fa-solid fa-diagram-project"></i> n8n (Orquestador)
+            </div>
+            <div class="cell row-n8n">
+                <div class="card flow-down" style="margin-bottom: 15px;">
+                    <div class="card-title"><i class="fa-solid fa-id-card icon-small"></i> Extracción OCR</div>
+                    Se envía imagen a <b>Nano Banana</b> para extracción de texto.
+                </div>
+                <div class="card">
+                    <div class="card-title"><i class="fa-solid fa-broom icon-small"></i> Limpieza Raw</div>
+                    Homologa las salidas del OCR (CIC, OCR, Clave Elector).
+                </div>
+            </div>
+            <div class="cell row-n8n">
+                <div class="card flow-down" style="margin-bottom: 15px;">
+                    <div class="card-title"><i class="fa-solid fa-sitemap icon-small"></i> Detección de Modelo</div>
+                    Identifica modelo INE (A, B, C... H) a partir de los datos limpios.
+                </div>
+                <div class="card flow-down">
+                    <div class="card-title"><i class="fa-solid fa-share-nodes icon-small"></i> Enrutamiento a API</div>
+                    Arma el JSON final y lo envía al sub-flujo / API en Python.
+                </div>
+            </div>
+            <div class="cell row-n8n"></div>
+            <div class="cell row-n8n">
+                <div class="card flow-down">
+                    <div class="card-title"><i class="fa-solid fa-envelope icon-small"></i> Motor de Correo</div>
+                    Detección de template (Exitoso/No Encontrado) y envío vía SMTP final.
+                </div>
+            </div>
+
+            <!-- Fila 3: Python INE -->
+            <div class="row-header row-ine" style="color: #d35400;">
+                <i class="fa-brands fa-python"></i> API Python (INE)
+            </div>
+            <div class="cell row-ine"></div>
+            <div class="cell row-ine">
+                <div class="card flow-down">
+                    <div class="card-title"><i class="fa-solid fa-shield-halved icon-small"></i> Validación Token</div>
+                    Endpoint protegido verifica JWT mediante JWKS de Auth0.
+                </div>
+            </div>
+            <div class="cell row-ine">
+                <div class="card flow-down">
+                    <div class="card-title"><i class="fa-solid fa-robot icon-small"></i> Scraper Playwright</div>
+                    Cola segura (Lock) -> Resuelve 2Captcha -> Consulta Lista Nominal -> Retorna JSON.
+                </div>
+            </div>
+            <div class="cell row-ine"></div>
+
+            <!-- Fila 4: Python Utils -->
+            <div class="row-header row-utils" style="color: #8e44ad;">
+                <i class="fa-solid fa-file-pdf"></i> API Utils (Mock)
+            </div>
+            <div class="cell row-utils"></div>
+            <div class="cell row-utils"></div>
+            <div class="cell row-utils"></div>
+            <div class="cell row-utils">
+                <div class="card">
+                    <div class="card-title"><i class="fa-solid fa-file-image icon-small"></i> Transformación</div>
+                    Endpoint `/pdf/image-to-pdf` toma la captura web (Base64) y retorna PDF estructurado.
+                </div>
+            </div>
+
+            <!-- Fila 5: Seguridad y Datos -->
+            <div class="row-header row-sec" style="color: #7f8c8d;">
+                <i class="fa-solid fa-vault"></i> Datos / Seguridad
+            </div>
+            <div class="cell row-sec"></div>
+            <div class="cell row-sec">
+                <div class="card">
+                    <div class="card-title"><i class="fa-solid fa-key icon-small"></i> Hashicorp Vault</div>
+                    Inyecta credenciales y tokens al entorno sin exponer variables de entorno.
+                </div>
+            </div>
+            <div class="cell row-sec">
+                <div class="card">
+                    <div class="card-title"><i class="fa-solid fa-database icon-small"></i> Trazabilidad</div>
+                    Enmascaramiento de PII. Guarda petición (`ECIA_TIP_INE_REQUEST`) y respuesta.
+                </div>
+            </div>
+            <div class="cell row-sec"></div>
+
+        </div>
+    </div>
+
+</body>
+</html>
